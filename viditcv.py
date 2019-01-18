@@ -2,13 +2,11 @@ import cv2
 
 cap = cv2.VideoCapture('D://Mov//sw//sw.mp4')
 
-# Default resolutions of the frame are obtained.The default resolutions are system dependent.
-# We convert the resolutions from float to integer.
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
 print('Frame width = ',frame_width)
 print('Frame height = ',frame_height)
-# Define the codec and create VideoWriter object.The output is stored in 'outpy.avi' file.
+
 out = cv2.VideoWriter('D://Mov//sw//outpy.mp4',cv2.VideoWriter_fourcc(*'MP4V'), 30, (frame_width,frame_height))
 
 pause = False
