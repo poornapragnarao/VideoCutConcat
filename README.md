@@ -7,23 +7,22 @@ This requires opencv(and dependencies like ffmpeg) and python to be installed in
 
 # Usage
 
-1. Enter the name of the video file with path in the .py source file.
-2. Run the script *python viditcv.py*
-3. Keys - 
+1. Run the script ```python viditcv.py```
+2. Keys - 
 
-   *spacebar* to pause.
+   ```spacebar``` to pause.
 
-   *,* for previous frame.
+   ```,``` for previous frame.
    
-   *.* for next frame.
+   ```.``` for next frame.
    
-4. Hit *'s'* on the frame from where you want to clip the video.
+3. Hit ```'s'``` on the frame from where you want to clip the video.
 
-5. Hit *'e'* on the frame where you want the clip to end.
+4. Hit ```'e'``` on the frame where you want the clip to end.
 
-6. Repeat as necessary.
+5. Repeat as necessary.
 
-7. Hit *'q'* or *'p'* to concatenate and save the video in the path specified in .py file.
+6. Hit ```'q'``` or ```'p'``` to concatenate and save the video in the path specified in .py file.
 
 
 

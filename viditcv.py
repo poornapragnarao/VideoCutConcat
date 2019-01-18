@@ -1,18 +1,32 @@
+import os
 import cv2
+import tkinter as tk
+from tkinter import filedialog
 
-cap = cv2.VideoCapture('D://Mov//sw//sw.mp4')
+root = tk.Tk()
+root.withdraw()
 
+file_path = filedialog.askopenfilename()
+cap = cv2.VideoCapture(file_path)
+folder = os.path.dirname(file_path)
 frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
 print('Frame width = ',frame_width)
 print('Frame height = ',frame_height)
 
-out = cv2.VideoWriter('D://Mov//sw//outpy.mp4',cv2.VideoWriter_fourcc(*'MP4V'), 30, (frame_width,frame_height))
+out = cv2.VideoWriter(folder + '/output_video.mp4',cv2.VideoWriter_fourcc(*'mp4v'), 30, (frame_width,frame_height))
 
 pause = False
 start_record = False
 start_frames = []
 end_frames = []
+
+font                   = cv2.FONT_HERSHEY_SIMPLEX
+bottomLeftCornerOfText = (10,500)
+fontScale              = 1
+fontColor              = (255,255,255)
+lineType               = 2
+
 while(cap.isOpened()):
     if not pause:
         curr_frame_num = cap.get(cv2.CAP_PROP_POS_FRAMES)
@@ -27,12 +41,6 @@ while(cap.isOpened()):
         break
     if curr_key == 32:
         pause = not pause
-        font                   = cv2.FONT_HERSHEY_SIMPLEX
-        bottomLeftCornerOfText = (10,500)
-        fontScale              = 1
-        fontColor              = (255,255,255)
-        lineType               = 2
-
         cv2.putText(frame,'| |', 
             bottomLeftCornerOfText, 
             font, 
