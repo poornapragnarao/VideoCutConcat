@@ -1,5 +1,6 @@
 import sys
 import cv2
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import QDir, Qt, QUrl, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QImage, QPixmap
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
@@ -22,7 +23,6 @@ class Thread(QThread):
         cap = cv2.VideoCapture(gl_fileName)
         while True:
             if gl_state:
-                print('read')
                 gl_curr_frame_num = cap.get(cv2.CAP_PROP_POS_FRAMES)
                 ret, frame = cap.read()
             if len(frame):
@@ -32,11 +32,12 @@ class Thread(QThread):
                 convertToQtFormat = QImage(rgbImage.data, w, h, bytesPerLine, QImage.Format_RGB888)
                 p = convertToQtFormat.scaled(640, 480, Qt.KeepAspectRatio)
                 self.changePixmap.emit(p)
+                cv2.waitKey(100)
 
 class cvDisp(QWidget):
     def __init__(self):
         super().__init__()
-        self.title = 'PyQt5 Video'
+        self.title = 'Video frames viewer'
         self.left = 100
         self.top = 100
         self.width = 640
@@ -76,19 +77,21 @@ class cvDisp(QWidget):
         endB = QPushButton("End")
         endB.clicked.connect(self.endBProcess)
 
+        savecurrB = QPushButton("Save current frame")
+        savecurrB.clicked.connect(self.savecurrBProcess)
+
+        saveallB = QPushButton("Save all frames")
+        saveallB.clicked.connect(self.saveallBProcess)
+
         self.startLabel = QLabel()
-        self.startLabel.resize(400, 20)
+        self.startLabel.setGeometry(QtCore.QRect(self.startLabel.x(), self.startLabel.y(), 10, 20))
         self.endLabel = QLabel()
-        self.endLabel.resize(400, 20)
+        self.endLabel.setGeometry(QtCore.QRect(self.endLabel.x(), self.endLabel.y(), 10, 20))
         
         self.playButton = QPushButton()
         self.playButton.setEnabled(False)
         self.playButton.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playButton.clicked.connect(self.play)
-
-        self.positionSlider = QSlider(Qt.Horizontal)
-        self.positionSlider.setRange(0, 0)
-        self.positionSlider.sliderMoved.connect(self.setPosition)
 
         controlLayout = QHBoxLayout()
         controlLayout.setContentsMargins(0, 0, 0, 0)
@@ -110,9 +113,8 @@ class cvDisp(QWidget):
         layout.addLayout(controlLayout)
         layout.addLayout(startLayout)
         layout.addLayout(endLayout)
-        layout.addWidget(self.positionSlider)
-
-
+        layout.addWidget(saveallB)
+        layout.addWidget(savecurrB)        
         self.setLayout(layout)
 
 
@@ -169,6 +171,26 @@ class cvDisp(QWidget):
         end_frames.append(gl_curr_frame_num)
         self.endLabel.setText(str(end_frames))
 
+    def saveallBProcess(self):
+        cap2 = cv2.VideoCapture(gl_fileName)
+        index = 0
+        while(cap2.isOpened()):
+            ret, frame = cap.read()
+            if ret:
+                index = index + 1
+                imName = 'gl_fileName'+str(index)+'.jpg'
+                cv2.imwrite(imName, frame)
+
+    def savecurrBProcess(self):
+        global ret, frame, gl_curr_frame_num
+        print('curr frame func')
+        if ret:
+            imName = str(gl_curr_frame_num) + '.png'
+            cv2.imwrite(imName, frame)
+        else:
+            error_dialog = QtWidgets.QErrorMessage()
+            error_dialog.showMessage('No file opened')
+
     def play(self):
         global gl_state
         if gl_state:
@@ -179,28 +201,6 @@ class cvDisp(QWidget):
             gl_state = True
             self.playButton.setIcon(
                     self.style().standardIcon(QStyle.SP_MediaPause))
-
-    def positionChanged(self, position):
-        global gl_position
-        gl_position = position
-        print(position)
-        print('pc')
-        self.positionSlider.setValue(position)
-
-    def durationChanged(self, duration):
-        self.positionSlider.setRange(0, duration)
-
-    def setPosition(self, position):
-        global gl_position
-        gl_position = position
-        print(position)
-        print('sp')
-        self.mediaPlayer.setPosition(position)
-
-    def handleError(self):
-        self.playButton.setEnabled(False)
-        self.errorLabel.setText("Error: " + self.mediaPlayer.errorString())
-
 
 
 if __name__ == '__main__':
