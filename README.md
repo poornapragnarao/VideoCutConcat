@@ -1,5 +1,5 @@
-# video_editing_cv_py
-Simple video clip concatenation.
+# Video cut and concatenate
+Simple video clip concatenation. Open a video, select start and end points and process. Concatenates all the start-end pair clips and creates a new video.
 
 # Requirements
 
