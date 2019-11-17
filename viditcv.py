@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 import tkinter as tk
 from tkinter import filedialog
 
@@ -6,7 +7,7 @@ root = tk.Tk()
 root.withdraw()
 
 file_path = filedialog.askopenfilename()
-out_file = file_path.split('.')[0] + '_out.' + file_path.split('.')[1]
+out_file = file_path.split('.')[0] + '_out.mp4'# + file_path.split('.')[1]
 cap = cv2.VideoCapture(file_path)
 
 frame_width = int(cap.get(3))
@@ -34,7 +35,15 @@ while(cap.isOpened()):
         curr_frame_num = cap.get(cv2.CAP_PROP_POS_FRAMES)
         ret, frame = cap.read()
 
-    cv2.imshow('frame',cv2.resize(frame, (int(frame_width/2), int(frame_height/2))))
+    if start_record:
+        cv2.putText(frame,'started record', 
+            bottomLeftCornerOfText, 
+            font, 
+            fontScale,
+            fontColor,
+            lineType)
+    if ret:            
+        cv2.imshow('frame',cv2.resize(frame, (int(frame_width/3), int(frame_height/3))))
     
     curr_key = cv2.waitKey(1) & 0xFF
     if curr_key != 255:
@@ -66,11 +75,16 @@ while(cap.isOpened()):
         curr_frame_num = cap.get(cv2.CAP_PROP_POS_FRAMES)
         ret, frame = cap.read()
     if curr_key == ord('s'):
+        start_record = True
         start_frames.append(curr_frame_num)
     if curr_key == ord('e'):
+        start_record = False
         end_frames.append(curr_frame_num)
+    if curr_key == ord('i'):
+        cv2.imwrite(file_path.split('.')[0] + '_' + str(curr_frame_num)+'.png',frame)
 
 
+frame = np.zeros((frame_width, frame_height))
 cv2.putText(frame,'Processing...', 
     bottomLeftCornerOfText, 
     font, 

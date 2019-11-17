@@ -9,6 +9,7 @@ This requires opencv(and dependencies like ffmpeg) and python to be installed in
 
 1. Run the script ```python viditcv.py```
 2. Keys - 
+   ```i``` to save current frame.
 
    ```spacebar``` to pause.
 
